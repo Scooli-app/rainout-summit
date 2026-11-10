@@ -13,7 +13,7 @@ export function StormMascot({ className }: { className?: string }) {
     { x: 37, d: "0.6s" },
   ];
   return (
-    <svg viewBox="0 0 48 56" role="img" aria-label="Storm, a guilty-looking rain cloud wearing a name sticker" className={cn("w-full", className)}>
+    <svg viewBox="0 0 48 56" role="img" aria-label="Charles, a guilty-looking rain cloud wearing a name sticker" className={cn("w-full", className)}>
       {/* drizzle */}
       {drops.map((r) => (
         <path
@@ -38,7 +38,7 @@ export function StormMascot({ className }: { className?: string }) {
       <ellipse cx="31.2" cy="26.6" rx="2" ry="1.1" fill="#ff8fab" opacity="0.55" />
       {/* wobbly sorry mouth */}
       <path d="M19.5 28.8q1.4-1.2 2.8 0t2.8 0" stroke="#fff" strokeWidth="1.1" fill="none" strokeLinecap="round" />
-      {/* HELLO my name is Storm */}
+      {/* HELLO my name is Charles */}
       <g transform="rotate(-9 39 31)">
         <rect x="32" y="25.5" width="14.5" height="11" rx="1.4" fill="#fff" stroke="var(--logo-ink)" strokeWidth="0.6" />
         <path d="M32.3 26.9a1.1 1.1 0 0 1 1.1-1.1h12.1a1.1 1.1 0 0 1 1.1 1.1v2.7H32.3z" fill="var(--logo-badge)" />
@@ -48,8 +48,8 @@ export function StormMascot({ className }: { className?: string }) {
         <text x="39.25" y="30.9" textAnchor="middle" fontSize="1.05" fill="#4b5565" fontFamily="var(--font-instrument), sans-serif">
           my name is
         </text>
-        <text x="39.25" y="35.2" textAnchor="middle" fontSize="3.6" fill="#111827" fontFamily="var(--font-hand), cursive">
-          Storm
+        <text x="39.25" y="35.1" textAnchor="middle" fontSize="3.3" fill="#111827" fontFamily="var(--font-hand), cursive">
+          Charles
         </text>
       </g>
     </svg>
