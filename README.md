@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="src/app/icon.svg" width="96" alt="Rainout Summit logo: a rain cloud wearing a HELLO my name is sticker" />
+</p>
 
-## Getting Started
+<h1 align="center">Rainout Summit</h1>
 
-First, run the development server:
+<p align="center">
+  The storm cancelled Web Summit Lisbon 2026. This is where the meetings went.
+</p>
+
+<p align="center">
+  <a href="https://github.com/Scooli-app/rainout-summit/actions/workflows/ci.yml"><img src="https://github.com/Scooli-app/rainout-summit/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license" />
+</p>
+
+---
+
+Rainout Summit is a small online stand-in for a rained-out Web Summit. Attendees bring their Web Summit profile over with one paste, get a short list of people worth meeting every day, and take it from there: messages, small groups, topic rooms and video calls.
+
+It's built for a few thousand people over a few days, not to replace the real thing.
+
+> Independent community project. Not affiliated with Web Summit.
+
+## Features
+
+| | |
+|---|---|
+| **Profile import** | Paste the Web Summit app's "Copy profile link". We read that one public page and fill in name, title, company, location, industry, bio, photo and sessions. Never asks for Web Summit credentials |
+| **Verification** | Optional verified tick: put a one-off `RAIN-XXXXX` code in your Web Summit bio and we re-check the page. One Web Summit profile can only be linked to one account |
+| **Matches** | A daily shortlist built from what you need and what you offer, both ways. Claude picks the best eight and writes why you should meet. Falls back to rule-based reasons without an API key |
+| **People** | Searchable directory with role, industry, "offers" and verified filters |
+| **Chat** | Direct messages, groups of up to 12, and public topic rooms |
+| **Meetings** | Pick a day, a 30-minute slot in your own time zone and a length. Once accepted, both people get a video link and a calendar link |
+| **Contacts** | Email (required), WhatsApp and LinkedIn (optional), shown only to people you've chatted or booked a call with |
+
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router, server actions) and React 19
+- [shadcn/ui](https://ui.shadcn.com) on Radix, Tailwind CSS 4
+- [Clerk](https://clerk.com) for sign-in (Google, LinkedIn, email)
+- Postgres with [Drizzle ORM](https://orm.drizzle.team); embedded [PGlite](https://pglite.dev) for local development
+- [Claude](https://www.anthropic.com/api) for match reasons
+- [Daily](https://www.daily.co) for video rooms, with a Jitsi fallback
+
+## Getting started
+
+Requires Node 22.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. Without `DATABASE_URL` the app uses an embedded Postgres in `./.pglite` and runs migrations on start.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Clerk needs keys even locally. The quickest way is temporary dev keys, no account needed:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npx clerk@latest init --accountless
+```
 
-## Learn More
+Want people to look at? Seed eight demo attendees, a few Lobby messages and a meeting request (local database only):
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run seed:demo
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Environment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Copy `.env.example` to `.env.local`.
 
-## Deploy on Vercel
+| Variable | Required | What it does |
+|---|---|---|
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` | Yes | Sign-in |
+| `DATABASE_URL` | In production | Postgres connection. Empty means local PGlite |
+| `AUTO_MIGRATE` | No | `true` runs migrations on boot |
+| `ANTHROPIC_API_KEY` | No | Claude-written match reasons |
+| `DAILY_API_KEY` | No | Daily video rooms instead of Jitsi links |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` / `npm start` | Production build and server |
+| `npm run lint` / `npm run typecheck` | ESLint and TypeScript |
+| `npm test` | Web Summit link and profile parser |
+| `npm run test:db` | Database flows on a throwaway PGlite |
+| `npm run test:flows` | Server actions end to end with two fake users |
+| `npm run db:generate` / `npm run db:migrate` | Drizzle migrations |
+| `npm run seed:demo` | Local demo data |
+
+## Project layout
+
+```
+src/
+  app/            routes: landing, onboarding, matches, people, chat, meetings, API
+  app/actions.ts  server actions (profile, import, chat, meetings, matches)
+  components/     app components; components/ui is shadcn
+  db/             Drizzle schema, client, room seed
+  lib/            Web Summit import, matching, chat, video, auth helpers
+drizzle/          SQL migrations
+tests/            node:test suites and the profile page fixture
+DESIGN.md         visual direction, tokens and rules
+```
+
+## Deploying
+
+1. Create a Postgres database (Neon's free tier is enough) and set `DATABASE_URL`
+2. Run `npm run db:migrate` once, or set `AUTO_MIGRATE=true` for the first deploy
+3. Create a Clerk production instance, enable Google and LinkedIn, set the keys
+4. Set `ANTHROPIC_API_KEY` and, optionally, `DAILY_API_KEY`
+5. Deploy to Vercel and add your domain
+
+## Known limits
+
+- Chat polls every 2.5 seconds instead of using websockets. Fine for a few thousand people
+- The message rate limit is per server instance and rough
+- Jitsi's public server asks the first person in a call to sign in. Set `DAILY_API_KEY` to avoid that
+- Profile import depends on Web Summit's current page markup; `tests/fixtures/ws-profile.html` pins what the parser expects
+
+## Contributing
+
+Branch from `main`, open a pull request, and wait for CI to pass. `main` is protected: no direct pushes or force pushes. The PR template lists the checks to run.
+
+## License
+
+[MIT](LICENSE)

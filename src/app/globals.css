@@ -1,26 +1,202 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+/* Dark mode follows the OS */
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+/*
+  Rainout Summit. Ink ramp (Lisbon stone in the rain), azulejo blue as the one accent.
+  shadcn variables map onto it. See DESIGN.md.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --radius: 0.625rem;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background: #f5f7fa;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+  --primary: #111827;
+  --primary-foreground: #ffffff;
+  --secondary: #eceff4;
+  --secondary-foreground: #111827;
+  --muted: #eceff4;
+  --muted-foreground: #4b5565;
+  --subtle-foreground: #6b7487;
+  --accent: #eceff4;
+  --accent-foreground: #111827;
+  --brand: #2343d5;
+  --brand-foreground: #ffffff;
+  --brand-soft: #e9edfb;
+  --destructive: #dc2626;
+  --success: #16a34a;
+  --border: rgb(17 24 39 / 0.09);
+  --input: rgb(17 24 39 / 0.15);
+  --ring: #2343d5;
+
+  --logo-cloud: #2343d5;
+  --logo-ink: #111827;
+  --logo-drop: #7f96ff;
+  --logo-badge: #e5484d;
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b0d14;
+    --foreground: #eef0f5;
+    --card: #11141c;
+    --card-foreground: #eef0f5;
+    --popover: #141822;
+    --popover-foreground: #eef0f5;
+    --primary: #eef0f5;
+    --primary-foreground: #0b0d14;
+    --secondary: #1a1e28;
+    --secondary-foreground: #eef0f5;
+    --muted: #1a1e28;
+    --muted-foreground: #a3a9b8;
+    --subtle-foreground: #7a8296;
+    --accent: #1a1e28;
+    --accent-foreground: #eef0f5;
+    --brand: #7f96ff;
+    --brand-foreground: #0b0d14;
+    --brand-soft: #1a2040;
+    --destructive: #e5484d;
+    --success: #4cc38a;
+    --border: rgb(238 240 245 / 0.09);
+    --input: rgb(238 240 245 / 0.16);
+    --ring: #7f96ff;
+
+    --logo-cloud: #7f96ff;
+    --logo-ink: #0b0d14;
+    --logo-drop: #4c63d8;
+    color-scheme: dark;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --font-sans: var(--font-instrument);
+  --font-heading: var(--font-instrument);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: var(--brand);
+    color: #fff;
+  }
+  * {
+    caret-color: var(--brand);
+    scrollbar-color: var(--border) transparent;
+  }
+  a {
+    text-underline-offset: 3px;
+  }
+}
+
+@layer components {
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+  .page-title {
+    font-size: clamp(1.75rem, 1.5rem + 0.8vw, 2rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  /* Role: quiet text with a small dot. Colour only on the dot. */
+  .role {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+    text-transform: capitalize;
+    white-space: nowrap;
+  }
+  .role::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #9aa1ad;
+  }
+  .role[data-role="startup"]::before { background: #16a34a; }
+  .role[data-role="investor"]::before { background: var(--brand); }
+  .role[data-role="speaker"]::before { background: #db2777; }
+  .role[data-role="partner"]::before { background: #d97706; }
+  .role[data-role="media"]::before { background: #0891b2; }
+}
+
+/* Storm's drizzle on the landing page. Off for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .storm-drop {
+    animation: storm-fall 1.8s cubic-bezier(0.55, 0, 1, 0.45) infinite;
+  }
+  @keyframes storm-fall {
+    0% {
+      transform: translateY(-3px);
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(12px);
+      opacity: 0;
+    }
+  }
 }
