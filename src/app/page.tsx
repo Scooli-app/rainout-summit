@@ -31,9 +31,16 @@ export default async function Home() {
     <div className="-mt-8 md:-mt-12">
       {/* Hero: no top bar, the storm is the star */}
       <section className="flex min-h-[100dvh] flex-col py-6 lg:py-8">
-        <Link href="/" aria-label="Rainout Summit home" className="w-fit">
-          <Logo />
-        </Link>
+        <div className="flex items-center justify-between gap-4">
+          <Link href="/" aria-label="Rainout Summit home" className="w-fit">
+            <Logo />
+          </Link>
+          <SignInButton mode="modal">
+            <Button variant="outline" size="lg" className="h-9 px-4">
+              Log in
+            </Button>
+          </SignInButton>
+        </div>
         <div className="grid flex-1 items-center gap-8 pt-6 lg:grid-cols-[1fr_1fr] lg:gap-14 lg:pt-0">
         <div className="flex min-w-0 flex-col">
           <h1 className="text-[clamp(2.4rem,1.5rem+3.4vw,4rem)] leading-[1.03] font-medium tracking-[-0.03em] text-balance">
@@ -62,19 +69,11 @@ export default async function Home() {
             </Field>
           </form>
 
-          <p className="mt-6 text-sm text-muted-foreground">
-            Already moved over?{" "}
-            <SignInButton mode="modal">
-              <button type="button" className="font-medium text-foreground underline underline-offset-4">
-                Log in
-              </button>
-            </SignInButton>
-            {n >= 20 && (
-              <>
-                . <span className="tnum text-foreground">{n.toLocaleString("en")}</span> attendees already have
-              </>
-            )}
-          </p>
+          {n >= 20 && (
+            <p className="mt-6 text-sm text-muted-foreground">
+              <span className="tnum text-foreground">{n.toLocaleString("en")}</span> attendees have moved over so far
+            </p>
+          )}
         </div>
 
         <StormScene />
@@ -125,7 +124,7 @@ function StormScene() {
           </span>
         </div>
       </div>
-      <figcaption className="sr-only">Storm, the cloud that cancelled Web Summit, apologising with a speech bubble</figcaption>
+      <figcaption className="sr-only">Charles, the cloud that cancelled Web Summit, apologising with a speech bubble</figcaption>
     </figure>
   );
 }
